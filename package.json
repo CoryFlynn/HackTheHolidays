@@ -1,0 +1,39 @@
+{
+  "name": "HackTheHolidays",
+  "version": "1.0.0",
+  "description": "This repository is for the participants and viewers of the 2020 HackTheHolidays occurring on the 18-20 of December. Please head to https://hackathon.blockchaincenter.com to register.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CoryFlynn/HackTheHolidays.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CoryFlynn/HackTheHolidays/issues"
+  },
+  "homepage": "https://github.com/CoryFlynn/HackTheHolidays#readme",
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.1",
+    "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "@symfoni/hardhat-react": "^0.1.6",
+    "chai": "^4.2.0",
+    "ethereum-waffle": "^3.2.1",
+    "ethers": "^5.0.24",
+    "hardhat": "^2.0.6",
+    "hardhat-deploy": "^0.7.0-beta.38",
+    "hardhat-deploy-ethers": "^0.3.0-beta.7",
+    "hardhat-typechain": "^0.3.4",
+    "ts-generator": "^0.1.1",
+    "ts-morph": "^9.1.0",
+    "ts-node": "^9.1.1",
+    "typechain": "^4.0.1",
+    "typechain-target-ethers-v5": "^1.2.2",
+    "typescript": "^4.1.3"
+  },
+  "dependencies": {}
+}
