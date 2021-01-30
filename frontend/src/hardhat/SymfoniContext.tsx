@@ -4,6 +4,9 @@
 import { providers, Signer, ethers } from "ethers";
 import React, { useEffect, useState } from "react";
 import Web3Modal, { IProviderOptions } from "web3modal";
+import StoreFrontDeployment from "./deployments/localhost/StoreFront.json";
+import { StoreFront } from "./typechain/StoreFront";
+import { StoreFront__factory } from "./typechain/factories/StoreFront__factory";
 
 const emptyContract = {
     instance: undefined,
@@ -23,6 +26,7 @@ const defaultSymfoniContext: SymfoniContextInterface = {
     providers: []
 };
 export const SymfoniContext = React.createContext<SymfoniContextInterface>(defaultSymfoniContext);
+export const StoreFrontContext = React.createContext<SymfoniStoreFront>(emptyContract);
 
 export interface SymfoniContextInterface {
     init: (provider?: string) => void;
@@ -36,6 +40,11 @@ export interface SymfoniProps {
     autoInit?: boolean;
     showLoading?: boolean;
     loadingComponent?: React.ReactNode;
+}
+
+export interface SymfoniStoreFront {
+    instance?: StoreFront;
+    factory?: StoreFront__factory;
 }
 
 export const Symfoni: React.FC<SymfoniProps> = ({
@@ -52,6 +61,7 @@ export const Symfoni: React.FC<SymfoniProps> = ({
     const [currentAddress, setCurrentAddress] = useState<string>(defaultCurrentAddress);
     const [fallbackProvider] = useState<string | undefined>(undefined);
     const [providerPriority, setProviderPriority] = useState<string[]>(["web3modal", "hardhat"]);
+    const [StoreFront, setStoreFront] = useState<SymfoniStoreFront>(emptyContract);
     useEffect(() => {
         if (messages.length > 0)
             console.debug(messages.pop())
@@ -112,10 +122,12 @@ export const Symfoni: React.FC<SymfoniProps> = ({
         }
     };
     const getWeb3ModalProvider = async (): Promise<any> => {
-        const providerOptions: IProviderOptions = {};
+        const providerOptions: IProviderOptions = {
+
+        };
         const web3Modal = new Web3Modal({
             // network: "mainnet",
-            cacheProvider: true,
+            cacheProvider: false,
             providerOptions, // required
         });
         return await web3Modal.connect();
@@ -129,6 +141,7 @@ export const Symfoni: React.FC<SymfoniProps> = ({
                 setMessages(old => [...old, text])
             }
             const finishWithContracts = (text: string) => {
+                setStoreFront(getStoreFront(_provider, _signer))
                 finish(text)
             }
             if (!autoInit && initializeCounter === 0) return finish("Auto init turned off.")
@@ -157,8 +170,19 @@ export const Symfoni: React.FC<SymfoniProps> = ({
         return () => { subscribed = false }
     }, [initializeCounter])
 
+    const getStoreFront = (_provider: providers.Provider, _signer?: Signer) => {
+
+        const contractAddress = StoreFrontDeployment.receipt.contractAddress
+        const instance = _signer ? StoreFront__factory.connect(contractAddress, _signer) : StoreFront__factory.connect(contractAddress, _provider)
+        const contract: SymfoniStoreFront = {
+            instance: instance,
+            factory: _signer ? new StoreFront__factory(_signer) : undefined,
+        }
+        return contract
+    }
+        ;
+
     const handleInitProvider = (provider?: string) => {
-        console.log("running")
         if (provider) {
             setProviderPriority(old => old.sort((a, b) => {
                 return a === provider ? -1 : b === provider ? 1 : 0;
@@ -171,16 +195,18 @@ export const Symfoni: React.FC<SymfoniProps> = ({
             <ProviderContext.Provider value={[provider, setProvider]}>
                 <SignerContext.Provider value={[signer, setSigner]}>
                     <CurrentAddressContext.Provider value={[currentAddress, setCurrentAddress]}>
-                        {showLoading && loading ?
-                            props.loadingComponent
-                                ? props.loadingComponent
-                                : <div>
-                                    {messages.map((msg, i) => (
-                                        <p key={i}>{msg}</p>
-                                    ))}
-                                </div>
-                            : props.children
-                        }
+                        <StoreFrontContext.Provider value={StoreFront}>
+                            {showLoading && loading ?
+                                props.loadingComponent
+                                    ? props.loadingComponent
+                                    : <div>
+                                        {messages.map((msg, i) => (
+                                            <p key={i}>{msg}</p>
+                                        ))}
+                                    </div>
+                                : props.children
+                            }
+                        </StoreFrontContext.Provider >
                     </CurrentAddressContext.Provider>
                 </SignerContext.Provider>
             </ProviderContext.Provider>

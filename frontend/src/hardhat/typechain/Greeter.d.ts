@@ -26,7 +26,7 @@ interface GreeterInterface extends ethers.utils.Interface {
     "setGreeting(string)": FunctionFragment;
   };
 
-  encodeFunctionData(functionFragment: "greet", values?: void): string;
+  encodeFunctionData(functionFragment: "greet", values?: undefined): string;
   encodeFunctionData(functionFragment: "setGreeting", values: [string]): string;
 
   decodeFunctionResult(functionFragment: "greet", data: BytesLike): Result;
@@ -58,7 +58,18 @@ export class Greeter extends Contract {
       0: string;
     }>;
 
+    "greet()"(
+      overrides?: CallOverrides
+    ): Promise<{
+      0: string;
+    }>;
+
     setGreeting(
+      _greeting: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setGreeting(string)"(
       _greeting: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
@@ -66,26 +77,59 @@ export class Greeter extends Contract {
 
   greet(overrides?: CallOverrides): Promise<string>;
 
+  "greet()"(overrides?: CallOverrides): Promise<string>;
+
   setGreeting(
     _greeting: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  staticCall: {
+  "setGreeting(string)"(
+    _greeting: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  callStatic: {
     greet(overrides?: CallOverrides): Promise<string>;
 
-    setGreeting(_greeting: string, overrides?: Overrides): Promise<void>;
+    "greet()"(overrides?: CallOverrides): Promise<string>;
+
+    setGreeting(_greeting: string, overrides?: CallOverrides): Promise<void>;
+
+    "setGreeting(string)"(
+      _greeting: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {};
 
   estimateGas: {
-    greet(): Promise<BigNumber>;
-    setGreeting(_greeting: string): Promise<BigNumber>;
+    greet(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "greet()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    setGreeting(_greeting: string, overrides?: Overrides): Promise<BigNumber>;
+
+    "setGreeting(string)"(
+      _greeting: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    greet(): Promise<PopulatedTransaction>;
-    setGreeting(_greeting: string): Promise<PopulatedTransaction>;
+    greet(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "greet()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    setGreeting(
+      _greeting: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setGreeting(string)"(
+      _greeting: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
   };
 }

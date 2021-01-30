@@ -27,6 +27,9 @@ interface StoreFrontInterface extends ethers.utils.Interface {
     "buyToken(uint256)": FunctionFragment;
     "changeValue(uint256,uint256)": FunctionFragment;
     "createToken(string,uint256,uint256)": FunctionFragment;
+    "getNumberTokens()": FunctionFragment;
+    "getToken(uint256)": FunctionFragment;
+    "myAddress()": FunctionFragment;
     "myBalance()": FunctionFragment;
     "ownership(uint256)": FunctionFragment;
     "tokenOwnership(uint256)": FunctionFragment;
@@ -47,7 +50,16 @@ interface StoreFrontInterface extends ethers.utils.Interface {
     functionFragment: "createToken",
     values: [string, BigNumberish, BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "myBalance", values?: void): string;
+  encodeFunctionData(
+    functionFragment: "getNumberTokens",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getToken",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "myAddress", values?: undefined): string;
+  encodeFunctionData(functionFragment: "myBalance", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ownership",
     values: [BigNumberish]
@@ -60,7 +72,7 @@ interface StoreFrontInterface extends ethers.utils.Interface {
     functionFragment: "tokenValue",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "withdraw", values?: void): string;
+  encodeFunctionData(functionFragment: "withdraw", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "balance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "buyToken", data: BytesLike): Result;
@@ -72,6 +84,12 @@ interface StoreFrontInterface extends ethers.utils.Interface {
     functionFragment: "createToken",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getNumberTokens",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "getToken", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "myAddress", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "myBalance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ownership", data: BytesLike): Result;
   decodeFunctionResult(
@@ -105,12 +123,30 @@ export class StoreFront extends Contract {
       0: BigNumber;
     }>;
 
+    "balance(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
+
     buyToken(
       _id: BigNumberish,
       overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
+    "buyToken(uint256)"(
+      _id: BigNumberish,
+      overrides?: PayableOverrides
+    ): Promise<ContractTransaction>;
+
     changeValue(
+      _id: BigNumberish,
+      newValue: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "changeValue(uint256,uint256)"(
       _id: BigNumberish,
       newValue: BigNumberish,
       overrides?: Overrides
@@ -123,13 +159,75 @@ export class StoreFront extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    "createToken(string,uint256,uint256)"(
+      _name: string,
+      value: BigNumberish,
+      size: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    getNumberTokens(
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
+
+    "getNumberTokens()"(
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
+
+    getToken(
+      _index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: string;
+      1: BigNumber;
+      2: BigNumber;
+    }>;
+
+    "getToken(uint256)"(
+      _index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: string;
+      1: BigNumber;
+      2: BigNumber;
+    }>;
+
+    myAddress(
+      overrides?: CallOverrides
+    ): Promise<{
+      0: string;
+    }>;
+
+    "myAddress()"(
+      overrides?: CallOverrides
+    ): Promise<{
+      0: string;
+    }>;
+
     myBalance(
       overrides?: CallOverrides
     ): Promise<{
       0: BigNumber;
     }>;
 
+    "myBalance()"(
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
+
     ownership(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: string;
+    }>;
+
+    "ownership(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<{
@@ -143,6 +241,13 @@ export class StoreFront extends Contract {
       0: string;
     }>;
 
+    "tokenOwnership(uint256)"(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: string;
+    }>;
+
     tokenValue(
       _id: BigNumberish,
       overrides?: CallOverrides
@@ -150,17 +255,42 @@ export class StoreFront extends Contract {
       0: BigNumber;
     }>;
 
+    "tokenValue(uint256)"(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
+
     withdraw(overrides?: Overrides): Promise<ContractTransaction>;
+
+    "withdraw()"(overrides?: Overrides): Promise<ContractTransaction>;
   };
 
   balance(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  "balance(address)"(
+    arg0: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   buyToken(
     _id: BigNumberish,
     overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
+  "buyToken(uint256)"(
+    _id: BigNumberish,
+    overrides?: PayableOverrides
+  ): Promise<ContractTransaction>;
+
   changeValue(
+    _id: BigNumberish,
+    newValue: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "changeValue(uint256,uint256)"(
     _id: BigNumberish,
     newValue: BigNumberish,
     overrides?: Overrides
@@ -173,39 +303,152 @@ export class StoreFront extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  "createToken(string,uint256,uint256)"(
+    _name: string,
+    value: BigNumberish,
+    size: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  getNumberTokens(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "getNumberTokens()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getToken(
+    _index: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<{
+    0: string;
+    1: BigNumber;
+    2: BigNumber;
+  }>;
+
+  "getToken(uint256)"(
+    _index: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<{
+    0: string;
+    1: BigNumber;
+    2: BigNumber;
+  }>;
+
+  myAddress(overrides?: CallOverrides): Promise<string>;
+
+  "myAddress()"(overrides?: CallOverrides): Promise<string>;
+
   myBalance(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "myBalance()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   ownership(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
+  "ownership(uint256)"(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   tokenOwnership(_id: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
+  "tokenOwnership(uint256)"(
+    _id: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   tokenValue(_id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
+  "tokenValue(uint256)"(
+    _id: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   withdraw(overrides?: Overrides): Promise<ContractTransaction>;
 
-  staticCall: {
+  "withdraw()"(overrides?: Overrides): Promise<ContractTransaction>;
+
+  callStatic: {
     balance(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    buyToken(_id: BigNumberish, overrides?: PayableOverrides): Promise<void>;
+    "balance(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    buyToken(_id: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    "buyToken(uint256)"(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     changeValue(
       _id: BigNumberish,
       newValue: BigNumberish,
-      overrides?: Overrides
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "changeValue(uint256,uint256)"(
+      _id: BigNumberish,
+      newValue: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<void>;
 
     createToken(
       _name: string,
       value: BigNumberish,
       size: BigNumberish,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<void>;
+
+    "createToken(string,uint256,uint256)"(
+      _name: string,
+      value: BigNumberish,
+      size: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    getNumberTokens(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "getNumberTokens()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getToken(
+      _index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: string;
+      1: BigNumber;
+      2: BigNumber;
+    }>;
+
+    "getToken(uint256)"(
+      _index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: string;
+      1: BigNumber;
+      2: BigNumber;
+    }>;
+
+    myAddress(overrides?: CallOverrides): Promise<string>;
+
+    "myAddress()"(overrides?: CallOverrides): Promise<string>;
 
     myBalance(overrides?: CallOverrides): Promise<BigNumber>;
 
+    "myBalance()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     ownership(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
+    "ownership(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     tokenOwnership(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    "tokenOwnership(uint256)"(
       _id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -215,43 +458,222 @@ export class StoreFront extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    withdraw(overrides?: Overrides): Promise<void>;
+    "tokenValue(uint256)"(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    withdraw(overrides?: CallOverrides): Promise<void>;
+
+    "withdraw()"(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {};
 
   estimateGas: {
-    balance(arg0: string): Promise<BigNumber>;
-    buyToken(_id: BigNumberish): Promise<BigNumber>;
-    changeValue(_id: BigNumberish, newValue: BigNumberish): Promise<BigNumber>;
+    balance(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    "balance(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    buyToken(
+      _id: BigNumberish,
+      overrides?: PayableOverrides
+    ): Promise<BigNumber>;
+
+    "buyToken(uint256)"(
+      _id: BigNumberish,
+      overrides?: PayableOverrides
+    ): Promise<BigNumber>;
+
+    changeValue(
+      _id: BigNumberish,
+      newValue: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "changeValue(uint256,uint256)"(
+      _id: BigNumberish,
+      newValue: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     createToken(
       _name: string,
       value: BigNumberish,
-      size: BigNumberish
+      size: BigNumberish,
+      overrides?: Overrides
     ): Promise<BigNumber>;
-    myBalance(): Promise<BigNumber>;
-    ownership(arg0: BigNumberish): Promise<BigNumber>;
-    tokenOwnership(_id: BigNumberish): Promise<BigNumber>;
-    tokenValue(_id: BigNumberish): Promise<BigNumber>;
-    withdraw(): Promise<BigNumber>;
+
+    "createToken(string,uint256,uint256)"(
+      _name: string,
+      value: BigNumberish,
+      size: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    getNumberTokens(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "getNumberTokens()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getToken(
+      _index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getToken(uint256)"(
+      _index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    myAddress(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "myAddress()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    myBalance(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "myBalance()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    ownership(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "ownership(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    tokenOwnership(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "tokenOwnership(uint256)"(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    tokenValue(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "tokenValue(uint256)"(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    withdraw(overrides?: Overrides): Promise<BigNumber>;
+
+    "withdraw()"(overrides?: Overrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    balance(arg0: string): Promise<PopulatedTransaction>;
-    buyToken(_id: BigNumberish): Promise<PopulatedTransaction>;
+    balance(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "balance(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    buyToken(
+      _id: BigNumberish,
+      overrides?: PayableOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "buyToken(uint256)"(
+      _id: BigNumberish,
+      overrides?: PayableOverrides
+    ): Promise<PopulatedTransaction>;
+
     changeValue(
       _id: BigNumberish,
-      newValue: BigNumberish
+      newValue: BigNumberish,
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
+
+    "changeValue(uint256,uint256)"(
+      _id: BigNumberish,
+      newValue: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
     createToken(
       _name: string,
       value: BigNumberish,
-      size: BigNumberish
+      size: BigNumberish,
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
-    myBalance(): Promise<PopulatedTransaction>;
-    ownership(arg0: BigNumberish): Promise<PopulatedTransaction>;
-    tokenOwnership(_id: BigNumberish): Promise<PopulatedTransaction>;
-    tokenValue(_id: BigNumberish): Promise<PopulatedTransaction>;
-    withdraw(): Promise<PopulatedTransaction>;
+
+    "createToken(string,uint256,uint256)"(
+      _name: string,
+      value: BigNumberish,
+      size: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    getNumberTokens(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "getNumberTokens()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getToken(
+      _index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getToken(uint256)"(
+      _index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    myAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "myAddress()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    myBalance(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "myBalance()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    ownership(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "ownership(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    tokenOwnership(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "tokenOwnership(uint256)"(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    tokenValue(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "tokenValue(uint256)"(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    withdraw(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    "withdraw()"(overrides?: Overrides): Promise<PopulatedTransaction>;
   };
 }
